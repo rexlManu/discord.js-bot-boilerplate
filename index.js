@@ -4,6 +4,7 @@ const Discord = require( 'discord.js' );
 
 dotenv.config();
 const client = new Discord.Client();
+const commands = [];
 
 function loadEvents() {
 	const fs = require( 'fs' );
@@ -38,6 +39,46 @@ function loadEvents() {
 	} );
 }
 
+function loadCommands() {
+	const fs = require( 'fs' );
+
+	fs.readdir( `${__dirname}/commands`, ( err, files ) => {
+		if ( err ) {
+			if ( err.code && err.code === 'ENOENT' ) {
+				console.error( chalk.magenta( '[Discord-Bot]' ), chalk.red( 'Can\'t load commands', 'No commands directory found.' ) );
+				return;
+			}
+
+			console.error( chalk.magenta( '[Discord-Bot]' ), chalk.red( 'An unexpected error occurred while loading commands.' ), err );
+			return;
+		}
+
+		for ( file of files ) {
+			let command = require( `${__dirname}/commands/${file}` );
+
+			if ( !command.name ) {
+				console.error( chalk.magenta( '[Discord-Bot]' ), chalk.red( `Can't load command from ${file}`, 'No name attribute found.' ) );
+				continue;
+			}
+
+			if ( !command.run ) {
+				console.error( chalk.magenta( '[Discord-Bot]' ), chalk.red( `Can't load command from ${file}`, 'No run function found.' ) );
+				continue;
+			}
+
+			if ( typeof command.run !== 'function' ) {
+				console.error( chalk.magenta( '[Discord-Bot]' ), chalk.red( `Can't load command from ${file}`, 'Run attribute is not a function.' ) );
+				continue;
+			}
+
+			command.file = file;
+			commands.push( command );
+
+			console.log( chalk.magenta( '[Discord-Bot]' ), chalk.green( `Successfully loaded command from ${file}.` ) );
+		}
+	} );
+}
+
 
 if ( !process.env.DISCORD_TOKEN ) throw new Error( 'No token specified.' );
 if ( !process.env.DISCORD_PREFIX ) throw new Error( 'No prefix specified.' );
@@ -58,5 +99,7 @@ client.on( 'disconnect', ( err ) => {
 
 console.log( chalk.magenta( '[Discord-Bot]' ), chalk.white( `Loading events..` ) );
 loadEvents();
+console.log( chalk.magenta( '[Discord-Bot]' ), chalk.white( `Loading commands..` ) );
+loadCommands();
 console.log( chalk.magenta( '[Discord-Bot]' ), chalk.white( `Connecting to Discord..` ) );
 client.login( process.env.DISCORD_TOKEN );
