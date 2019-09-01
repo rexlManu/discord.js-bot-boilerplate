@@ -88,6 +88,22 @@ client.on( 'ready', () => {
 	console.log( chalk.magenta( '[Discord-Bot]' ), chalk.white( `Logged in as ${client.user.tag}.` ) );
 } );
 
+client.on( 'message', async ( message ) => {
+	if ( message.content.startsWith( process.env.DISCORD_PREFIX ) ) {
+		const args = message.content.split( ' ' );
+		const cmd = args.splice( 0, 1 ).join( '' ).substr( process.env.DISCORD_PREFIX.length );
+
+		for ( let command of commands ) {
+			if (
+				( command.name === cmd ) ||
+				( command.aliases && command.aliases.indexOf( cmd ) > -1 )
+			) {
+				command.run( client, message, args );
+			}
+		}
+	}
+} );
+
 client.on( 'error', ( err ) => {
 	console.error( chalk.magenta( '[Discord-Bot]' ), chalk.red( 'An unexpected error occurred.' ), err );
 } );
