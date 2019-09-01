@@ -1,0 +1,24 @@
+{
+  "name": "discord.js-bot-boilerplate",
+  "version": "1.0.0",
+  "description": "A simple Discord.JS Boilerplate for a good workflow.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UnlimitedBytes/discord.js-bot-boilerplate.git"
+  },
+  "author": "UnlimitedBytes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/UnlimitedBytes/discord.js-bot-boilerplate/issues"
+  },
+  "homepage": "https://github.com/UnlimitedBytes/discord.js-bot-boilerplate#readme",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.1.0"
+  }
+}
